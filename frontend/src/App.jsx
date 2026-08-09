@@ -1,6 +1,7 @@
 import { BrowserRouter, Routes, Route } from 'react-router-dom'
-import Register from './pages/Register'
 import Login from './pages/Login'
+import Register from './pages/Register'
+import Projects from './pages/Projects'
 import ProtectedRoute from './components/ProtectedRoute'
 import { useAuth } from './context/AuthContext'
 
@@ -12,6 +13,9 @@ function Dashboard() {
       <h1 className="text-3xl font-bold text-white">
         Welcome, {user?.username}
       </h1>
+      <a href="/projects" className="text-blue-400 underline">
+        View Projects
+      </a>
       <button
         onClick={logout}
         className="bg-red-600 hover:bg-red-700 text-white px-4 py-2 rounded"
@@ -35,8 +39,16 @@ function App() {
               </ProtectedRoute>
             }
           />
-          <Route path="/register" element={<Register />} />
+          <Route
+            path="/projects"
+            element={
+              <ProtectedRoute>
+                <Projects />
+              </ProtectedRoute>
+            }
+          />
           <Route path="/login" element={<Login />} />
+          <Route path="/register" element={<Register />} />
         </Routes>
       </div>
     </BrowserRouter>
