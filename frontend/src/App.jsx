@@ -2,6 +2,7 @@ import { BrowserRouter, Routes, Route } from 'react-router-dom'
 import Login from './pages/Login'
 import Register from './pages/Register'
 import Projects from './pages/Projects'
+import Servers from './pages/Servers'
 import ProtectedRoute from './components/ProtectedRoute'
 import { useAuth } from './context/AuthContext'
 
@@ -15,6 +16,9 @@ function Dashboard() {
       </h1>
       <a href="/projects" className="text-blue-400 underline">
         View Projects
+      </a>
+      <a href="/servers" className="text-blue-400 underline">
+        View Servers
       </a>
       <button
         onClick={logout}
@@ -47,6 +51,14 @@ function App() {
               </ProtectedRoute>
             }
           />
+          <Route
+            path="/servers"
+            element={
+              <ProtectedRoute>
+                <Servers />
+              </ProtectedRoute>
+  }
+/>
           <Route path="/login" element={<Login />} />
           <Route path="/register" element={<Register />} />
         </Routes>
