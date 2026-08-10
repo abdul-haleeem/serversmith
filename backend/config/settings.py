@@ -48,6 +48,7 @@ INSTALLED_APPS = [
     'rest_framework_simplejwt.token_blacklist',
     'corsheaders',
     'apps.projects',
+    'apps.servers',
 ]
 
 AUTH_USER_MODEL = 'users.User'
@@ -112,6 +113,8 @@ DATABASES = {
         'PORT': os.environ.get('DB_PORT'),
     }
 }
+
+FIELD_ENCRYPTION_KEY = os.environ.get('FIELD_ENCRYPTION_KEY')
 
 
 # Password validation
