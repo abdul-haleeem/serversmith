@@ -38,3 +38,19 @@ class CommandHistory(models.Model):
 
     def __str__(self):
         return f"{self.command} on {self.server.name}"
+
+class ServerMetric(models.Model):
+    server = models.ForeignKey(
+        Server,
+        on_delete=models.CASCADE,
+        related_name='metrics',
+    )
+    memory_percent = models.FloatField(null=True)
+    disk_percent = models.CharField(max_length=10, null=True)
+    recorded_at = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        ordering = ['-recorded_at']
+
+    def __str__(self):
+        return f"{self.server.name} @ {self.recorded_at}"

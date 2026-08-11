@@ -1,6 +1,7 @@
 from rest_framework import serializers
 from .models import Server
-from .models import CommandHistory
+from .models import CommandHistory, ServerMetric
+
 
 
 class ServerSerializer(serializers.ModelSerializer):
@@ -19,3 +20,8 @@ class CommandHistorySerializer(serializers.ModelSerializer):
     class Meta:
         model = CommandHistory
         fields = ['id', 'command', 'output', 'error', 'exit_code', 'executed_at']
+
+class ServerMetricSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = ServerMetric
+        fields = ['id', 'memory_percent', 'disk_percent', 'recorded_at']

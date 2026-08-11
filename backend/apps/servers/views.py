@@ -1,12 +1,10 @@
 from rest_framework import viewsets, permissions
-from .models import Server
-from .serializers import ServerSerializer
+from .models import Server, CommandHistory, ServerMetric
+from .serializers import ServerSerializer, CommandHistorySerializer, ServerMetricSerializer
 from .permissions import IsOwner
 from rest_framework.decorators import action
 from rest_framework.response import Response
 from .services import SSHService
-from .models import CommandHistory
-from .serializers import CommandHistorySerializer
 
 class ServerViewSet(viewsets.ModelViewSet):
     serializer_class = ServerSerializer
@@ -52,4 +50,27 @@ class ServerViewSet(viewsets.ModelViewSet):
         server = self.get_object()
         history = server.command_history.all().order_by('-executed_at')
         serializer = CommandHistorySerializer(history, many=True)
+        return Response(serializer.data)
+
+
+    @action(detail=True, methods=['get'])
+    def metrics(self, request, pk=None):
+        server = self.get_object()
+        service = SSHService(server)
+        result = service.get_metrics()
+
+        if result.get('memory') and result.get('disk'):
+            ServerMetric.objects.create(
+                server=server,
+                memory_percent=result['memory']['percent'],
+                disk_percent=result['disk']['percent'],
+            )
+
+        return Response(result)
+
+    @action(detail=True, methods=['get'])
+    def metrics_history(self, request, pk=None):
+        server = self.get_object()
+        metrics = server.metrics.all()[:20]
+        serializer = ServerMetricSerializer(metrics, many=True)
         return Response(serializer.data)
