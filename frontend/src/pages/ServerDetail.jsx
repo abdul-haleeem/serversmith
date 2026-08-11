@@ -1,6 +1,13 @@
 import { useState, useEffect } from 'react'
 import { useParams, Link } from 'react-router-dom'
-import { getServer, testConnection, executeCommand, getHistory } from '../services/servers'
+import {
+  getServer,
+  testConnection,
+  executeCommand,
+  getHistory,
+  getMetrics,
+  getMetricsHistory,
+} from '../services/servers'
 
 function ServerDetail() {
   const { id } = useParams()
@@ -10,6 +17,9 @@ function ServerDetail() {
   const [command, setCommand] = useState('')
   const [running, setRunning] = useState(false)
   const [history, setHistory] = useState([])
+  const [metrics, setMetrics] = useState(null)
+  const [metricsHistory, setMetricsHistory] = useState([])
+  const [loadingMetrics, setLoadingMetrics] = useState(false)
 
   const loadServer = async () => {
     const response = await getServer(id)
@@ -53,6 +63,19 @@ function ServerDetail() {
     setRunning(false)
   }
 
+  const handleCheckMetrics = async () => {
+    setLoadingMetrics(true)
+    try {
+      const response = await getMetrics(id)
+      setMetrics(response.data)
+      const historyResponse = await getMetricsHistory(id)
+      setMetricsHistory(historyResponse.data)
+    } catch (err) {
+      setMetrics(null)
+    }
+    setLoadingMetrics(false)
+  }
+
   if (!server) {
     return <p className="text-gray-400 p-8">Loading...</p>
   }
@@ -68,6 +91,7 @@ function ServerDetail() {
         {server.ssh_username}@{server.ip_address}:{server.ssh_port}
       </p>
 
+      {/* Test Connection */}
       <div className="bg-gray-800 p-4 rounded-lg mb-6 w-96">
         <button
           onClick={handleTestConnection}
@@ -83,6 +107,7 @@ function ServerDetail() {
         )}
       </div>
 
+      {/* Run Command */}
       <form
         onSubmit={handleRunCommand}
         className="bg-gray-800 p-4 rounded-lg mb-6 w-96 flex flex-col gap-2"
@@ -104,6 +129,46 @@ function ServerDetail() {
         </button>
       </form>
 
+      {/* Metrics */}
+      <div className="bg-gray-800 p-4 rounded-lg mb-6 w-96">
+        <div className="flex justify-between items-center mb-2">
+          <h2 className="text-white font-semibold">Metrics</h2>
+          <button
+            onClick={handleCheckMetrics}
+            disabled={loadingMetrics}
+            className="bg-purple-600 hover:bg-purple-700 text-white px-3 py-1 rounded text-sm disabled:opacity-50"
+          >
+            {loadingMetrics ? 'Checking...' : 'Check Now'}
+          </button>
+        </div>
+
+        {metrics && (
+          <div className="text-sm text-gray-300 flex flex-col gap-1">
+            <p>
+              Memory: {metrics.memory?.used_mb}MB / {metrics.memory?.total_mb}MB (
+              {metrics.memory?.percent}%)
+            </p>
+            <p>
+              Disk: {metrics.disk?.used} / {metrics.disk?.total} ({metrics.disk?.percent})
+            </p>
+            <p>Uptime: {metrics.uptime}</p>
+          </div>
+        )}
+
+        {metricsHistory.length > 0 && (
+          <div className="mt-3 pt-3 border-t border-gray-700">
+            <p className="text-gray-400 text-xs mb-1">Recent checks:</p>
+            {metricsHistory.slice(0, 5).map((entry) => (
+              <p key={entry.id} className="text-gray-500 text-xs">
+                {new Date(entry.recorded_at).toLocaleTimeString()} — RAM {entry.memory_percent}%,
+                Disk {entry.disk_percent}
+              </p>
+            ))}
+          </div>
+        )}
+      </div>
+
+      {/* Command History */}
       <div className="w-96">
         <h2 className="text-white font-semibold mb-2">Command History</h2>
         {history.length === 0 ? (
@@ -120,7 +185,8 @@ function ServerDetail() {
                   <pre className="text-red-400 whitespace-pre-wrap mt-1">{entry.error}</pre>
                 )}
                 <p className="text-gray-500 text-xs mt-1">
-                  exit code: {entry.exit_code ?? 'n/a'} — {new Date(entry.executed_at).toLocaleString()}
+                  exit code: {entry.exit_code ?? 'n/a'} —{' '}
+                  {new Date(entry.executed_at).toLocaleString()}
                 </p>
               </div>
             ))}
