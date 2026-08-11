@@ -22,10 +22,10 @@ function Register() {
   }
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gray-900">
+    <div className="min-h-screen flex items-center justify-center bg-ink-black">
       <form
         onSubmit={handleSubmit}
-        className="bg-gray-800 p-8 rounded-lg flex flex-col gap-4 w-80"
+        className="bg-prussian-blue p-8 rounded-lg flex flex-col gap-4 w-80 border border-dusk-blue/40"
       >
         <h1 className="text-2xl font-bold text-white mb-2">Register</h1>
 
@@ -34,7 +34,7 @@ function Register() {
           placeholder="Username"
           value={username}
           onChange={(e) => setUsername(e.target.value)}
-          className="p-2 rounded bg-gray-700 text-white"
+          className="p-2 rounded bg-dusk-blue text-white placeholder-sky-mist/70 focus:outline-none focus:ring-2 focus:ring-sky-mist"
         />
 
         <input
@@ -42,7 +42,7 @@ function Register() {
           placeholder="Email"
           value={email}
           onChange={(e) => setEmail(e.target.value)}
-          className="p-2 rounded bg-gray-700 text-white"
+          className="p-2 rounded bg-dusk-blue text-white placeholder-sky-mist/70 focus:outline-none focus:ring-2 focus:ring-sky-mist"
         />
 
         <input
@@ -50,23 +50,24 @@ function Register() {
           placeholder="Password"
           value={password}
           onChange={(e) => setPassword(e.target.value)}
-          className="p-2 rounded bg-gray-700 text-white"
+          className="p-2 rounded bg-dusk-blue text-white placeholder-sky-mist/70 focus:outline-none focus:ring-2 focus:ring-sky-mist"
         />
 
         {error && <p className="text-red-400 text-sm">{error}</p>}
 
         <button
           type="submit"
-          className="bg-blue-600 hover:bg-blue-700 text-white p-2 rounded"
+          className="bg-dusk-blue hover:brightness-110 text-white p-2 rounded transition"
         >
           Register
         </button>
-        <p className="text-gray-400 text-sm text-center">
-  Already have an account?{' '}
-  <a href="/login" className="text-blue-400 underline">
-    Login
-  </a>
-</p>
+
+        <p className="text-sky-mist text-sm text-center">
+          Already have an account?{' '}
+          <a href="/login" className="text-sky-mist underline hover:text-white">
+            Login
+          </a>
+        </p>
       </form>
     </div>
   )

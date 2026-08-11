@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react'
-import { getServers, createServer, updateServer, deleteServer } from '../services/servers'
 import { Link } from 'react-router-dom'
+import { getServers, createServer, updateServer, deleteServer } from '../services/servers'
 
 function ServerCard({ server, onUpdated, onDeleted }) {
   const [isEditing, setIsEditing] = useState(false)
@@ -34,19 +34,19 @@ function ServerCard({ server, onUpdated, onDeleted }) {
     return (
       <form
         onSubmit={handleSave}
-        className="bg-gray-800 p-4 rounded-lg flex flex-col gap-2"
+        className="bg-prussian-blue p-4 rounded-lg flex flex-col gap-2 border border-dusk-blue/40"
       >
         <input value={name} onChange={(e) => setName(e.target.value)}
-          className="p-2 rounded bg-gray-700 text-white" placeholder="Name" />
+          className="p-2 rounded bg-dusk-blue text-white" placeholder="Name" />
         <input value={ipAddress} onChange={(e) => setIpAddress(e.target.value)}
-          className="p-2 rounded bg-gray-700 text-white" placeholder="IP Address" />
+          className="p-2 rounded bg-dusk-blue text-white" placeholder="IP Address" />
         <input value={sshPort} onChange={(e) => setSshPort(e.target.value)}
-          className="p-2 rounded bg-gray-700 text-white" placeholder="SSH Port" />
+          className="p-2 rounded bg-dusk-blue text-white" placeholder="SSH Port" />
         <input value={sshUsername} onChange={(e) => setSshUsername(e.target.value)}
-          className="p-2 rounded bg-gray-700 text-white" placeholder="SSH Username" />
+          className="p-2 rounded bg-dusk-blue text-white" placeholder="SSH Username" />
         <input value={operatingSystem} onChange={(e) => setOperatingSystem(e.target.value)}
-          className="p-2 rounded bg-gray-700 text-white" placeholder="OS" />
-        <p className="text-gray-500 text-xs">
+          className="p-2 rounded bg-dusk-blue text-white" placeholder="OS" />
+        <p className="text-sky-mist/70 text-xs">
           Password is not editable here — leave blank means unchanged.
         </p>
         <div className="flex gap-2">
@@ -54,7 +54,7 @@ function ServerCard({ server, onUpdated, onDeleted }) {
             Save
           </button>
           <button type="button" onClick={() => setIsEditing(false)}
-            className="bg-gray-600 hover:bg-gray-700 text-white px-3 py-1 rounded">
+            className="bg-dusk-blue hover:brightness-110 text-white px-3 py-1 rounded transition">
             Cancel
           </button>
         </div>
@@ -63,23 +63,23 @@ function ServerCard({ server, onUpdated, onDeleted }) {
   }
 
   return (
-    <div className="bg-gray-800 p-4 rounded-lg">
-      <Link to={`/servers/${server.id}`} className="text-white font-semibold hover:underline">
-  {server.name}
-</Link>
-      <p className="text-gray-400 text-sm">
+    <div className="bg-prussian-blue p-4 rounded-lg border border-dusk-blue/40">
+      <Link to={`/servers/${server.id}`} className="text-white font-semibold hover:text-sky-mist transition">
+        {server.name}
+      </Link>
+      <p className="text-sky-mist text-sm">
         {server.ssh_username}@{server.ip_address}:{server.ssh_port}
       </p>
-      <p className="text-gray-500 text-xs">
+      <p className="text-sky-mist/60 text-xs">
         {server.operating_system || 'OS not set'}
       </p>
       <div className="flex gap-2 mt-2">
         <button onClick={() => setIsEditing(true)}
-          className="bg-blue-600 hover:bg-blue-700 text-white px-3 py-1 rounded text-sm">
+          className="bg-dusk-blue hover:brightness-110 text-white px-3 py-1 rounded text-sm transition">
           Edit
         </button>
         <button onClick={handleDelete}
-          className="bg-red-600 hover:bg-red-700 text-white px-3 py-1 rounded text-sm">
+          className="bg-red-600 hover:bg-red-700 text-white px-3 py-1 rounded text-sm transition">
           Delete
         </button>
       </div>
@@ -130,38 +130,38 @@ function Servers() {
   }
 
   return (
-    <div className="min-h-screen bg-gray-900 p-8">
+    <div className="min-h-screen bg-ink-black p-8">
       <h1 className="text-3xl font-bold text-white mb-6">Servers</h1>
 
       <form onSubmit={handleSubmit}
-        className="bg-gray-800 p-6 rounded-lg flex flex-col gap-3 w-96 mb-8">
+        className="bg-prussian-blue p-6 rounded-lg flex flex-col gap-3 w-96 mb-8 border border-dusk-blue/40">
         <h2 className="text-xl font-semibold text-white">Add Server</h2>
         <input type="text" placeholder="Name" value={name}
           onChange={(e) => setName(e.target.value)}
-          className="p-2 rounded bg-gray-700 text-white" />
+          className="p-2 rounded bg-dusk-blue text-white placeholder-sky-mist/70" />
         <input type="text" placeholder="IP Address" value={ipAddress}
           onChange={(e) => setIpAddress(e.target.value)}
-          className="p-2 rounded bg-gray-700 text-white" />
+          className="p-2 rounded bg-dusk-blue text-white placeholder-sky-mist/70" />
         <input type="number" placeholder="SSH Port" value={sshPort}
           onChange={(e) => setSshPort(e.target.value)}
-          className="p-2 rounded bg-gray-700 text-white" />
+          className="p-2 rounded bg-dusk-blue text-white placeholder-sky-mist/70" />
         <input type="text" placeholder="SSH Username" value={sshUsername}
           onChange={(e) => setSshUsername(e.target.value)}
-          className="p-2 rounded bg-gray-700 text-white" />
+          className="p-2 rounded bg-dusk-blue text-white placeholder-sky-mist/70" />
         <input type="password" placeholder="SSH Password" value={sshPassword}
           onChange={(e) => setSshPassword(e.target.value)}
-          className="p-2 rounded bg-gray-700 text-white" />
+          className="p-2 rounded bg-dusk-blue text-white placeholder-sky-mist/70" />
         {error && <p className="text-red-400 text-sm">{error}</p>}
         <button type="submit"
-          className="bg-blue-600 hover:bg-blue-700 text-white p-2 rounded">
+          className="bg-dusk-blue hover:brightness-110 text-white p-2 rounded transition">
           Add Server
         </button>
       </form>
 
       {loading ? (
-        <p className="text-gray-400">Loading servers...</p>
+        <p className="text-sky-mist">Loading servers...</p>
       ) : servers.length === 0 ? (
-        <p className="text-gray-400">No servers yet.</p>
+        <p className="text-sky-mist">No servers yet.</p>
       ) : (
         <div className="flex flex-col gap-3 w-96">
           {servers.map((server) => (

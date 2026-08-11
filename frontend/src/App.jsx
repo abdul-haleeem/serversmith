@@ -11,19 +11,21 @@ function Dashboard() {
   const { user, logout } = useAuth()
 
   return (
-    <div className="min-h-screen bg-gray-900 flex flex-col items-center justify-center gap-4">
+    <div className="min-h-screen bg-ink-black flex flex-col items-center justify-center gap-4">
       <h1 className="text-3xl font-bold text-white">
         Welcome, {user?.username}
       </h1>
-      <a href="/projects" className="text-blue-400 underline">
-        View Projects
-      </a>
-      <a href="/servers" className="text-blue-400 underline">
-        View Servers
-      </a>
+      <div className="flex gap-4">
+        <a href="/projects" className="text-sky-mist underline hover:text-white">
+          View Projects
+        </a>
+        <a href="/servers" className="text-sky-mist underline hover:text-white">
+          View Servers
+        </a>
+      </div>
       <button
         onClick={logout}
-        className="bg-red-600 hover:bg-red-700 text-white px-4 py-2 rounded"
+        className="bg-red-600 hover:bg-red-700 text-white px-4 py-2 rounded transition"
       >
         Logout
       </button>
@@ -34,7 +36,7 @@ function Dashboard() {
 function App() {
   return (
     <BrowserRouter>
-      <div className="min-h-screen bg-gray-900">
+      <div className="min-h-screen bg-ink-black">
         <Routes>
           <Route
             path="/"
