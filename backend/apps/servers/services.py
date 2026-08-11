@@ -94,3 +94,40 @@ class SSHService:
             "available": parts[3],
             "percent": parts[4],
         }
+
+    #methods for running docker commands
+
+    def list_containers(self):
+        result = self.execute_command(
+            'docker ps -a --format "{{.ID}}|{{.Names}}|{{.Image}}|{{.Status}}"'
+        )
+        if not result["success"] and result["error"]:
+            return {"success": False, "containers": [], "error": result["error"]}
+
+        containers = []
+        for line in result["output"].strip().split("\n"):
+            if not line:
+                continue
+            parts = line.split("|")
+            if len(parts) == 4:
+                containers.append({
+                    "id": parts[0],
+                    "name": parts[1],
+                    "image": parts[2],
+                    "status": parts[3],
+                })
+        return {"success": True, "containers": containers, "error": None}
+
+    def container_action(self, container_id, action):
+        allowed_actions = {"start", "stop", "restart"}
+        if action not in allowed_actions:
+            return {"success": False, "message": "Invalid action"}
+
+        result = self.execute_command(f"docker {action} {container_id}")
+        if result["exit_code"] == 0:
+            return {"success": True, "message": f"Container {action}ed"}
+        return {"success": False, "message": result["error"] or "Command failed"}
+
+    def container_logs(self, container_id, lines=50):
+        result = self.execute_command(f"docker logs --tail {lines} {container_id}")
+        return {"success": True, "logs": result["output"] + result["error"]}

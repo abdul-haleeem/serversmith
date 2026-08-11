@@ -74,3 +74,25 @@ class ServerViewSet(viewsets.ModelViewSet):
         metrics = server.metrics.all()[:20]
         serializer = ServerMetricSerializer(metrics, many=True)
         return Response(serializer.data)
+    
+    @action(detail=True, methods=['get'])
+    def containers(self, request, pk=None):
+        server = self.get_object()
+        service = SSHService(server)
+        result = service.list_containers()
+        return Response(result)
+
+    @action(detail=True, methods=['post'], url_path='containers/(?P<container_id>[^/.]+)/action')
+    def container_action(self, request, pk=None, container_id=None):
+        server = self.get_object()
+        docker_action = request.data.get('action')
+        service = SSHService(server)
+        result = service.container_action(container_id, docker_action)
+        return Response(result)
+
+    @action(detail=True, methods=['get'], url_path='containers/(?P<container_id>[^/.]+)/logs')
+    def container_logs(self, request, pk=None, container_id=None):
+        server = self.get_object()
+        service = SSHService(server)
+        result = service.container_logs(container_id)
+        return Response(result)
