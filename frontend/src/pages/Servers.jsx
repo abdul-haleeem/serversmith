@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react'
 import { getServers, createServer, updateServer, deleteServer } from '../services/servers'
+import { Link } from 'react-router-dom'
 
 function ServerCard({ server, onUpdated, onDeleted }) {
   const [isEditing, setIsEditing] = useState(false)
@@ -63,7 +64,9 @@ function ServerCard({ server, onUpdated, onDeleted }) {
 
   return (
     <div className="bg-gray-800 p-4 rounded-lg">
-      <h3 className="text-white font-semibold">{server.name}</h3>
+      <Link to={`/servers/${server.id}`} className="text-white font-semibold hover:underline">
+  {server.name}
+</Link>
       <p className="text-gray-400 text-sm">
         {server.ssh_username}@{server.ip_address}:{server.ssh_port}
       </p>

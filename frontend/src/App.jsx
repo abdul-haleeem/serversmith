@@ -3,6 +3,7 @@ import Login from './pages/Login'
 import Register from './pages/Register'
 import Projects from './pages/Projects'
 import Servers from './pages/Servers'
+import ServerDetail from './pages/ServerDetail'
 import ProtectedRoute from './components/ProtectedRoute'
 import { useAuth } from './context/AuthContext'
 
@@ -57,8 +58,16 @@ function App() {
               <ProtectedRoute>
                 <Servers />
               </ProtectedRoute>
-  }
-/>
+            }
+          />
+          <Route
+            path="/servers/:id"
+            element={
+              <ProtectedRoute>
+                <ServerDetail />
+              </ProtectedRoute>
+            }
+          />
           <Route path="/login" element={<Login />} />
           <Route path="/register" element={<Register />} />
         </Routes>
