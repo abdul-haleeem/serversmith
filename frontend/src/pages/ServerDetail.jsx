@@ -7,6 +7,9 @@ import {
   getHistory,
   getMetrics,
   getMetricsHistory,
+  getContainers,
+  containerAction,
+  getContainerLogs,
 } from '../services/servers'
 
 function ServerDetail() {
@@ -20,6 +23,11 @@ function ServerDetail() {
   const [metrics, setMetrics] = useState(null)
   const [metricsHistory, setMetricsHistory] = useState([])
   const [loadingMetrics, setLoadingMetrics] = useState(false)
+  const [containers, setContainers] = useState([])
+  const [loadingContainers, setLoadingContainers] = useState(false)
+  const [containerActionLoading, setContainerActionLoading] = useState(null)
+  const [logs, setLogs] = useState(null)
+  const [logsContainerName, setLogsContainerName] = useState(null)
 
   const loadServer = async () => {
     const response = await getServer(id)
@@ -73,6 +81,39 @@ function ServerDetail() {
       setMetrics(null)
     }
     setLoadingMetrics(false)
+  }
+
+  const handleLoadContainers = async () => {
+    setLoadingContainers(true)
+    try {
+      const response = await getContainers(id)
+      setContainers(response.data.containers || [])
+    } catch (err) {
+      setContainers([])
+    }
+    setLoadingContainers(false)
+  }
+
+  const handleContainerAction = async (containerName, action) => {
+    setContainerActionLoading(containerName + action)
+    try {
+      await containerAction(id, containerName, action)
+      await handleLoadContainers()
+    } catch (err) {
+      // no-op; list refresh already attempted above
+    }
+    setContainerActionLoading(null)
+  }
+
+  const handleViewLogs = async (containerName) => {
+    setLogsContainerName(containerName)
+    setLogs('Loading...')
+    try {
+      const response = await getContainerLogs(id, containerName)
+      setLogs(response.data.logs || 'No logs available')
+    } catch (err) {
+      setLogs('Could not fetch logs')
+    }
   }
 
   if (!server) {
@@ -163,6 +204,71 @@ function ServerDetail() {
                 Disk {entry.disk_percent}
               </p>
             ))}
+          </div>
+        )}
+      </div>
+
+      {/* Docker Containers */}
+      <div className="bg-prussian-blue p-4 rounded-lg mb-6 w-96 border border-dusk-blue/40">
+        <div className="flex justify-between items-center mb-2">
+          <h2 className="text-white font-semibold">Docker Containers</h2>
+          <button
+            onClick={handleLoadContainers}
+            disabled={loadingContainers}
+            className="bg-dusk-blue hover:brightness-110 text-white px-3 py-1 rounded text-sm disabled:opacity-50 transition"
+          >
+            {loadingContainers ? 'Loading...' : 'Refresh'}
+          </button>
+        </div>
+
+        {containers.length === 0 ? (
+          <p className="text-sky-mist text-sm">
+            No containers loaded yet — click Refresh.
+          </p>
+        ) : (
+          <div className="flex flex-col gap-2">
+            {containers.map((container) => (
+              <div key={container.id} className="bg-dusk-blue/30 p-2 rounded text-sm">
+                <p className="text-white font-mono">{container.name}</p>
+                <p className="text-sky-mist text-xs">{container.image}</p>
+                <p className="text-sky-mist/70 text-xs">{container.status}</p>
+                <div className="flex gap-1 mt-1 flex-wrap">
+                  {['start', 'stop', 'restart'].map((action) => (
+                    <button
+                      key={action}
+                      onClick={() => handleContainerAction(container.name, action)}
+                      disabled={containerActionLoading === container.name + action}
+                      className="bg-ink-black hover:brightness-125 text-white px-2 py-1 rounded text-xs disabled:opacity-50 transition"
+                    >
+                      {containerActionLoading === container.name + action ? '...' : action}
+                    </button>
+                  ))}
+                  <button
+                    onClick={() => handleViewLogs(container.name)}
+                    className="bg-ink-black hover:brightness-125 text-white px-2 py-1 rounded text-xs transition"
+                  >
+                    logs
+                  </button>
+                </div>
+              </div>
+            ))}
+          </div>
+        )}
+
+        {logsContainerName && (
+          <div className="mt-3 pt-3 border-t border-dusk-blue/40">
+            <div className="flex justify-between items-center mb-1">
+              <p className="text-sky-mist text-xs">Logs: {logsContainerName}</p>
+              <button
+                onClick={() => setLogsContainerName(null)}
+                className="text-sky-mist text-xs hover:text-white"
+              >
+                close
+              </button>
+            </div>
+            <pre className="text-white/80 text-xs whitespace-pre-wrap bg-ink-black p-2 rounded max-h-48 overflow-y-auto">
+              {logs}
+            </pre>
           </div>
         )}
       </div>

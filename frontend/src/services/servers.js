@@ -10,3 +10,8 @@ export const executeCommand = (id, command) => api.post(`/servers/${id}/execute/
 export const getHistory = (id) => api.get(`/servers/${id}/history/`)
 export const getMetrics = (id) => api.get(`/servers/${id}/metrics/`)
 export const getMetricsHistory = (id) => api.get(`/servers/${id}/metrics_history/`)
+export const getContainers = (id) => api.get(`/servers/${id}/containers/`)
+export const containerAction = (id, containerId, action) =>
+  api.post(`/servers/${id}/containers/${containerId}/action/`, { action })
+export const getContainerLogs = (id, containerId) =>
+  api.get(`/servers/${id}/containers/${containerId}/logs/`)
