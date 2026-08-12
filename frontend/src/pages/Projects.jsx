@@ -6,6 +6,7 @@ function ProjectCard({ project, onUpdated, onDeleted }) {
   const [name, setName] = useState(project.name)
   const [framework, setFramework] = useState(project.framework)
   const [repositoryUrl, setRepositoryUrl] = useState(project.repository_url)
+  const [port, setPort] = useState(project.port)
 
   const handleSave = async (e) => {
     e.preventDefault()
@@ -13,6 +14,7 @@ function ProjectCard({ project, onUpdated, onDeleted }) {
       name,
       framework,
       repository_url: repositoryUrl,
+      port,
     })
     setIsEditing(false)
     onUpdated()
@@ -35,16 +37,26 @@ function ProjectCard({ project, onUpdated, onDeleted }) {
           value={name}
           onChange={(e) => setName(e.target.value)}
           className="p-2 rounded bg-dusk-blue text-white"
+          placeholder="Name"
         />
         <input
           value={framework}
           onChange={(e) => setFramework(e.target.value)}
           className="p-2 rounded bg-dusk-blue text-white"
+          placeholder="Framework"
         />
         <input
           value={repositoryUrl}
           onChange={(e) => setRepositoryUrl(e.target.value)}
           className="p-2 rounded bg-dusk-blue text-white"
+          placeholder="Repository URL"
+        />
+        <input
+          type="number"
+          value={port}
+          onChange={(e) => setPort(e.target.value)}
+          className="p-2 rounded bg-dusk-blue text-white"
+          placeholder="App Port"
         />
         <div className="flex gap-2">
           <button
@@ -69,7 +81,7 @@ function ProjectCard({ project, onUpdated, onDeleted }) {
     <div className="bg-prussian-blue p-4 rounded-lg border border-dusk-blue/40">
       <h3 className="text-white font-semibold">{project.name}</h3>
       <p className="text-sky-mist text-sm">
-        {project.framework || 'No framework set'}
+        {project.framework || 'No framework set'} — port {project.port}
       </p>
       {project.repository_url && (
         <a href={project.repository_url} className="text-sky-mist text-sm underline hover:text-white">
@@ -100,6 +112,7 @@ function Projects() {
   const [name, setName] = useState('')
   const [framework, setFramework] = useState('')
   const [repositoryUrl, setRepositoryUrl] = useState('')
+  const [port, setPort] = useState('3000')
   const [error, setError] = useState('')
 
   const loadProjects = async () => {
@@ -116,10 +129,16 @@ function Projects() {
     e.preventDefault()
     setError('')
     try {
-      await createProject({ name, framework, repository_url: repositoryUrl })
+      await createProject({
+        name,
+        framework,
+        repository_url: repositoryUrl,
+        port,
+      })
       setName('')
       setFramework('')
       setRepositoryUrl('')
+      setPort('3000')
       loadProjects()
     } catch (err) {
       setError('Could not create project. Check the fields and try again.')
@@ -151,9 +170,16 @@ function Projects() {
         />
         <input
           type="text"
-          placeholder="Repository URL (optional)"
+          placeholder="Repository URL (must have a Dockerfile)"
           value={repositoryUrl}
           onChange={(e) => setRepositoryUrl(e.target.value)}
+          className="p-2 rounded bg-dusk-blue text-white placeholder-sky-mist/70"
+        />
+        <input
+          type="number"
+          placeholder="App Port (e.g. 3000, 8000)"
+          value={port}
+          onChange={(e) => setPort(e.target.value)}
           className="p-2 rounded bg-dusk-blue text-white placeholder-sky-mist/70"
         />
         {error && <p className="text-red-400 text-sm">{error}</p>}

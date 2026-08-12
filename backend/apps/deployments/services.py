@@ -10,22 +10,32 @@ class DeploymentService:
         deployment.status = deployment.RUNNING
         deployment.save()
 
-        container_name = f"deploy-{deployment.project.id}-{deployment.id}"
+        project = deployment.project
+        container_name = f"deploy-{project.id}-{deployment.id}"
+        clone_dir = f"/tmp/{container_name}"
+        image_name = f"serversmith-{project.id}"
+        app_port = project.port
+
         service = SSHService(deployment.server)
 
         commands = [
             f"docker rm -f {container_name} 2>/dev/null || true",
-            f"docker run -d --name {container_name} -p 0:80 nginx",
+            f"rm -rf {clone_dir}",
+            f"git clone --depth 1 {project.repository_url} {clone_dir}",
+            f"docker build -t {image_name} {clone_dir}",
+            f"docker run -d --name {container_name} -p 0:{app_port} {image_name}",
         ]
 
         log_lines = []
         success = True
+        safe_to_fail = ["docker rm", "rm -rf"]
 
         for cmd in commands:
             result = service.execute_command(cmd)
             log_lines.append(f"$ {cmd}")
             log_lines.append(result["output"] or result["error"])
-            if result["exit_code"] not in (0, None) and "docker rm" not in cmd:
+            is_safe = any(marker in cmd for marker in safe_to_fail)
+            if result["exit_code"] not in (0, None) and not is_safe:
                 success = False
                 break
 

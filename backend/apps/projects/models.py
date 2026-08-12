@@ -10,6 +10,7 @@ class Project(models.Model):
     name = models.CharField(max_length=100)
     framework = models.CharField(max_length=50, blank=True)
     repository_url = models.URLField(blank=True)
+    port = models.PositiveIntegerField(default=3000)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 
