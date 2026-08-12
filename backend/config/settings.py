@@ -49,6 +49,7 @@ INSTALLED_APPS = [
     'corsheaders',
     'apps.projects',
     'apps.servers',
+    'apps.deployments',
 ]
 
 AUTH_USER_MODEL = 'users.User'

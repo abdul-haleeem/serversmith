@@ -3,6 +3,7 @@ import Login from './pages/Login'
 import Register from './pages/Register'
 import Projects from './pages/Projects'
 import Servers from './pages/Servers'
+import Deployments from './pages/Deployments'
 import ServerDetail from './pages/ServerDetail'
 import ProtectedRoute from './components/ProtectedRoute'
 import { useAuth } from './context/AuthContext'
@@ -21,6 +22,9 @@ function Dashboard() {
         </a>
         <a href="/servers" className="text-sky-mist underline hover:text-white">
           View Servers
+        </a>
+        <a href="/deployments" className="text-sky-mist underline hover:text-white">
+          View Deployments
         </a>
       </div>
       <button
@@ -70,6 +74,14 @@ function App() {
               </ProtectedRoute>
             }
           />
+          <Route
+            path="/deployments"
+            element={
+              <ProtectedRoute>
+                <Deployments />
+              </ProtectedRoute>
+  }
+/>
           <Route path="/login" element={<Login />} />
           <Route path="/register" element={<Register />} />
         </Routes>
